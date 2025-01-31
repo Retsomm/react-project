@@ -1,7 +1,7 @@
 import express from "express"
 import { errorMessage } from "../errorMessage.js"
 import Hotel from "../models/Hotel.js"
-import { createHotel, deleteHotel, getHotel, updatedHotel } from "../RoutesController/hotels.js"
+import { createHotel, deleteHotel, getHotel, updatedHotel,getAllHotels } from "../RoutesController/hotels.js"
 
 const router = express.Router()
 //創建第一筆資料
@@ -12,5 +12,7 @@ router.get("/find/:id",getHotel)
 router.put("/:id",updatedHotel)
 //刪除資料
 router.delete("/:id",deleteHotel)
-
+//抓取所有住宿資料
+//可以用/api/v1/hotels/ 的api url 配合get來抓取所有住宿資料
+router.get("/",getAllHotels)
 export default router
