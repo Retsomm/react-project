@@ -1,6 +1,7 @@
 import express from "express"
 import { createRoom, deleteRoom, getAllRooms, getHotelRooms, getRoom, updatedRoom } from "../RoutesController/room.js";
 
+
 const router = express.Router()
 
 //前面的url是/api/v1/rooms
