@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import express from "express";
 import dotenv from "dotenv";
 import cors from "cors"; // ➜ 解決 CORS 問題
+import cookieParser from "cookie-parser";
 import hotelsApiRoute from "./ApiRoutes/hotels.js";
 import roomsApiRoute from "./ApiRoutes/rooms.js";
 import usersApiRoute from "./ApiRoutes/users.js";
@@ -27,7 +28,7 @@ mongoose.connection.on("disconnected", () => console.log("MongoDB disconnected!"
 // 讓 Express 處理 JSON 資料
 app.use(express.json());
 app.use(cors()); // 允許跨域請求
-
+app.use(cookieParser());
 // API 路由
 app.use("/api/v1/hotels", hotelsApiRoute);
 app.use("/api/v1/rooms", roomsApiRoute);
