@@ -1,11 +1,13 @@
 import React from 'react'
 import Categories from '../subcomponents/Categories'
 import PostCards from '../subcomponents/PostCards'
+import PopularHotels from '../subcomponents/PopularHotels'
 import { CategoriesCities, CategoriesType, PopularHotelsData} from '../data'
 import "./feature.scss"
-import PopularHotels from '../subcomponents/PopularHotels'
+import useFetch from '../hooks/useFetch'
 const Feature = () => {
-    
+    const { data = [], loading, error } = useFetch("/hotels");
+
     return (
         <div className='feature'>
             <div className="container">
@@ -16,21 +18,26 @@ const Feature = () => {
                     <Categories dataArray={CategoriesType} />
                 </div>
                 <div className="listItems">
-                    <PostCards/>
+                    <PostCards />
                 </div>
                 <div className="listTitle">
                     <h3>探索臺灣</h3>
                     <p>這些熱門目的地魅力無窮，等你來體驗！</p>
                 </div>
                 <div className="listItems">
-                    <Categories dataArray={CategoriesCities}/>
+                    <Categories dataArray={CategoriesCities} />
                 </div>
+                <div className="listTitle">
+                    <h2>人氣民宿、公寓類型住宿</h2>
+                </div>
+                {error && <p className="error">載入失敗：{error}</p>}
                 <div className="listItems">
-                    <PopularHotels dataArray={PopularHotelsData}/>
+                    {loading ? <p>載入中...</p> : <PopularHotels dataArray={data} />}
                 </div>
             </div>
         </div>
-    )
-}
+    );
+};
+
 
 export default Feature
