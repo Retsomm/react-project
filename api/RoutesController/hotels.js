@@ -40,10 +40,39 @@ export const deleteHotel = async(req,res,next)=>{
     }
 }
 export const getAllHotels = async(req,res,next)=>{
+    const withQuery=req.query;
+    const popularHotel = req.query.popularHotel;
     try{
-        const hotelsList = await Hotel.find()
+        const hotelsList = await Hotel.find(
+            {
+                ...withQuery
+            }
+        ).limit(7)
         res.status(200).json(hotelsList)
     }catch(error){
         next(errorMessage(500,"無法抓取所有飯店資料",error)) 
+    }
+}
+export const amountOfType = async(req,res,next)=>{
+    const type = req.query.type.split(",")
+    try{
+        const list = await Promise.all(type.map(type=>{
+            return Hotel.countDocuments({type:type})
+        }))
+        res.status(200).json(list)
+    } catch(error) {
+        next(errorMessage(500,"無法抓取住宿種類",error))
+    }
+}
+// 來統計各個cities的種類
+export const amountOfCities = async(req,res,next)=>{
+    const cities = req.query.cities.split(",")
+    try{
+        const list = await Promise.all(cities.map(city=>{
+            return Hotel.countDocuments({city:city})
+        }))
+        res.status(200).json(list)
+    } catch(error) {
+        next(errorMessage(500,"無法統計各個城市的提供住宿的數量",error))
     }
 }
