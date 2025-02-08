@@ -94,8 +94,8 @@ const HotelsList = () => {
               
                 {loading ?   <Skeleton type="SearchItemSK" length={3}/> :
                 data.map((item,index) =>
-                  <SearchItem active={index==0 && "active"} 
-                  key={item._id} dataDetail={item}   conditions={conditions} dates={dates} />
+                  <SearchItem active={index===0 && "active"} 
+                  key={item._id} dataDetail={item}   conditions={options} dates={date} />
                 )
               }
           

@@ -1,7 +1,12 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import "./searchItem.scss"
+import { ReservationDatesAndPrice } from '../datesCalculate'
 const SearchItem = ({active,dataDetail,conditions,dates}) => {
+  const hotelsPrice = dataDetail.cheapestPrice
+  const { DatesLength, totalHotelsPrice} = ReservationDatesAndPrice(dates[0]?.startDate, dates[0]?.endDate, hotelsPrice)
+  console.log(DatesLength + "總價" + totalHotelsPrice)
+  console.log(dates[0])
   return (
     <div className={`SearchItem ${active}`}>
       <img className="itemImg" src={dataDetail.photos[0]} alt="" />
@@ -36,15 +41,17 @@ const SearchItem = ({active,dataDetail,conditions,dates}) => {
             </div>
             <div className="detailRight">
               <span className="optionDes">
-                {conditions.adult} 位大人 {conditions.children!=0 && `、${conditions.children}位小孩`}
+                {DatesLength===0?<>請先選擇住宿日期</>:`總共 ${DatesLength}晚`}
+                  <br />{conditions.adult} 位大人 {conditions.children!==0 && `、${conditions.children}位小孩`}
               </span>
               <span className="price">
-                TWD{dataDetail.cheapestPrice}
+              {DatesLength===0?`TWD ${dataDetail.cheapestPrice} 價格`:`TWD ${totalHotelsPrice} 價格`}
+                
               </span>
               <span className="tax">
                 含稅費與其他費用
               </span>
-              <Link to="/hotels/imhotelrandomid123">
+              <Link to={`/hotels/${dataDetail._id}`}>
               <button className='btn' >查看客房供應情況</button>
               </Link>
             </div>
