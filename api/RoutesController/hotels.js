@@ -39,20 +39,27 @@ export const deleteHotel = async(req,res,next)=>{
         next(errorMessage(500,"刪除失敗，請確認是否有其id",error)) //後來我們想要客製化的
     }
 }
-export const getAllHotels = async(req,res,next)=>{
-    const withQuery=req.query;
-    const popularHotel = req.query.popularHotel;
-    try{
-        const hotelsList = await Hotel.find(
-            {
-                ...withQuery
-            }
-        ).limit(7)
-        res.status(200).json(hotelsList)
-    }catch(error){
-        next(errorMessage(500,"無法抓取所有飯店資料",error)) 
+export const getAllHotels = async (req, res, next) => {
+    try {
+        // 確保 lowestPrice 和 highestPrice 為數字
+        const lowestPrice = Number(req.query.lowestPrice) || 0;
+        const highestPrice = Number(req.query.highestPrice) || 9999;
+        
+        // 其他查詢條件
+        const { popularHotel, ...withQuery } = req.query;
+
+        // Mongoose 查詢
+        const hotelsList = await Hotel.find({
+            ...withQuery,
+            cheapestPrice: { $gte: lowestPrice, $lte: highestPrice }
+        }).limit(7);
+
+        res.status(200).json(hotelsList);
+    } catch (error) {
+        next(errorMessage(500, "無法抓取所有飯店資料", error));
     }
-}
+};
+
 export const amountOfType = async(req,res,next)=>{
     const type = req.query.type.split(",")
     try{
