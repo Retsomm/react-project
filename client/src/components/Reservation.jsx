@@ -1,17 +1,54 @@
 import { faCircleXmark } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { format } from 'date-fns'
-import React from 'react'
+import React ,{userContext,useState}from 'react'
 import { useContext } from 'react'
 import { OptionsContext } from '../context/OptionsContext'
+import {LoginContext} from '../context/LoginContext'
 import useFetch from '../hooks/useFetch'
 import "./reservation.scss"
+import {motion} from "framer-motion";
+
 const Reservation = ({ openSetting, hotelid,DatesLength }) => {
     const { data, loading, error } = useFetch(`/rooms/findHotel/${hotelid}`)
     const {date,options} = useContext(OptionsContext)
+    const {user} = userContext(LoginContext)
+    const [roomNumber,setRoomNumber]=useState([])
+    const [orderData, setOrderData]=useState({
+        userId:user._id,
+        hotelId: hotelid,
+        ReservationDates:[
+            {
+                startDate:date[0].startDate,
+                endDate:date[0].endDate,
+            }
+        ],
+        totalPrice:0,
+        options:{
+            adult: options.adult,
+            children: options.children,
+            rooms:options.room,
+        }
+    })
+    const handleCheckBox = (e)=>{
+        const roomNumberId = e.target.value
+        const checked = e.target.checked
+        setRoomNumber(
+            checked
+                ? [...roomNumber, roomNumberId]
+                : roomNumber.filter((item)=> item !== roomNumberId)
+        );
+    }
     return (
         <div className='Reservation'>
-            <div className="container">
+            <motion.div className="container"
+            initial={{ scale:0}}
+            animate={{ scale:1}}
+            transition={{
+                type:"spring",
+                stiffness:260,
+                damping:20
+            }}>
             <div className="wrapper">
                 <div className="title">
                     <h2>空房情況</h2>
@@ -49,7 +86,7 @@ const Reservation = ({ openSetting, hotelid,DatesLength }) => {
                                     <div >
                                         {room.roomNumbers?.map((item, i) => (
                                             <span key={i}>
-                                                <input type="checkbox" value={item._id} />
+                                                <input type="checkbox" value={item._id} onChange={(e)=>setRoomNumber(e.target.value)}/>
                                                 {item.number}<br/>
                                             </span>
                                         ))}
@@ -61,7 +98,7 @@ const Reservation = ({ openSetting, hotelid,DatesLength }) => {
                     </div>
                 </div >
             </div>
-            </div>
+            </motion.div>
         </div >
     )
 }
