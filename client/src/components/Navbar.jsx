@@ -1,23 +1,51 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import "./navbar.scss"
+
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faBed, faCar, faPlane, faTaxi, faToriiGate } from '@fortawesome/free-solid-svg-icons'
-const Navbar = () => {
+import { Link } from 'react-router-dom'
+import { LoginContext } from '../context/LoginContext'
+import { logout } from '../constants/actionTypes'
+const Navbar = ({ type }) => {
+
+    const { user, dispatch } = useContext(LoginContext);
+    const handleClick = (e) => {
+        dispatch({ type: logout })
+    }
+
     return (
-        <div className='navbar'>
-            <div className="navbarContainer">
+        <div className={`navbar ${type}`}>
+            <div className="navbarContainer ">
                 <div className="lineOne">
                     <div className="left">
-                    <span className="logo">SAM.BOOKING</span>
+                        <Link to="/" className='logo'>
+                            SAM.BOOKING
+                        </Link>
+
                     </div>
                     <div className="right">
-                    <button className='navButtonFlag'/>
-                    <button className="navButtonNotif">使用webpack測試</button>
-                    <button className="navButton">註冊</button>
-                    <button className="navButton">登入</button>
+                        <button className='navButtonFlag' />
+                        <button className="navButtonNotif">使用webpack測試</button>
+                        {type === "auth" ? <></> :
+                            <>
+                                {user ? 
+                                    <><span className='username'>{user.username}</span>
+                                    <button className="navButton" onClick={handleClick}>登出</button></>
+                                    : <>
+                                        <Link to="/register">
+                                            <button className="navButton">註冊</button>
+                                        </Link>
+                                        <Link to="/login">
+                                            <button className="navButton">登入</button>
+                                        </Link>
+                                    </>
+                                }
+                            </>
+                        }
                     </div>
                 </div>
-                <div className="lineTwo">
+                {type === "auth" ? <></> :
+                    <div className="lineTwo">
                         <div className="item active">
                             <FontAwesomeIcon icon={faBed} />
                             <span >住宿</span>
@@ -38,8 +66,8 @@ const Navbar = () => {
                             <FontAwesomeIcon icon={faTaxi} />
                             <span >機場計程車</span>
                         </div>
-                </div>
-
+                    </div>
+                }
             </div>
         </div>
     )
