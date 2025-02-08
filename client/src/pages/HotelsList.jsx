@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useContext,useState } from 'react'
 import SearchItem from '../components/SearchItem'
 import Navbar from '../components/Navbar'
 import "./hotelsList.scss"
@@ -6,6 +6,8 @@ import { DateRange } from 'react-date-range'
 import { format } from 'date-fns'
 import * as locales from 'react-date-range/dist/locale';
 import { useLocation } from 'react-router-dom'
+import { new_Options } from '../constants/actionTypes'
+import { OptionsContext } from '../context/OptionsContext';
 const HotelsList = () => {
   const locationSearchBarData =useLocation()
   const [openConditions, setOpenConditions] = useState(false);
@@ -14,7 +16,10 @@ const HotelsList = () => {
   const [destination, setDestination] = useState(locationSearchBarData.state?.destination);
   const [dates, setDates] = useState(locationSearchBarData.state?.dates);
   const [conditions, setConditions] = useState(locationSearchBarData.state?.conditions);
-
+  const {dispatch} = useContext(OptionsContext)
+  const handleClick = ()=>{
+    dispatch({type:new_Options,payload:{city:destination,date:dates,options:conditions}})
+  }
   return (
     <>
       <div>
@@ -66,7 +71,7 @@ const HotelsList = () => {
                   </div>
               </div>
               <div className="listItem">
-                <button className='searchbtn'>搜尋</button>
+                <button className='searchbtn' onClick={handleClick}>搜尋</button>
               </div>
             </div>
 

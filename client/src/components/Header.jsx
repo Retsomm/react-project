@@ -1,18 +1,22 @@
 import { faBed, faCalendar, faPeopleGroup } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import 'react-date-range/dist/styles.css'; // main css file
 import 'react-date-range/dist/theme/default.css'; // theme css file
 import { DateRange } from 'react-date-range';
+import * as locales from 'react-date-range/dist/locale';
 import format from 'date-fns/format';
 import "./header.scss"
-import { zhTW } from "date-fns/locale";
 import { useNavigate } from 'react-router-dom';
+import { new_Options } from '../constants/actionTypes';
+import { OptionsContext } from '../context/OptionsContext';
 const Header = () => {
-  const navigate = useNavigate();
+  const navigate=useNavigate()
+  
+  const { city,date,options,dispatch } = useContext(OptionsContext);
   const [openConditions, setOpenConditions] = useState(false);
   const [openCalendar, setOpenCalendar] = useState(false);
-  const [destination, setDestionation] = useState('');
+  const [destination, setDestination] = useState(city);
   const [dates, setDates] = useState([
     {
       startDate: new Date(),
@@ -20,14 +24,7 @@ const Header = () => {
       key: 'selection',
     }
   ]);
-  const [conditions, setConditions] = useState(
-    {
-      adult: 1, //初始人數,房間數為一
-      children: 0, //可以不一定要有小孩
-      room: 1,
-    }
-  );
-  console.log(destination,dates,conditions)
+  const [conditions, setConditions] = useState(options);
   const handleCounter = (name, sign) => { 
     setConditions(prev => {
         return{
@@ -35,10 +32,13 @@ const Header = () => {
             [name]: sign==="increase" ?  conditions[name]+1 :conditions[name]-1 
         } 
     })
-} 
-  const handleSearchBarSubmit =()=>{
-    navigate("/hotelsList",{state:{destination,dates,conditions}})
-  }
+}
+
+const handleSearchBarSubmit =()=>{
+  dispatch({type:new_Options,payload:{city:destination,date:dates,options:conditions}})
+  navigate("/hotelsList", {state:{destination,dates,conditions}})
+}
+
   return (
     <div className='header'>
       <div className="headerContainer">
@@ -47,12 +47,10 @@ const Header = () => {
         </h1>
         <p className="headerDes">搜尋飯店、民宿及其他住宿類型的優惠…
           <br />Booking.com clone挑戰（為SamKo Demo使用不為盈利）</p>
-
-
         <div className="headerSearchBar">
           <div className="SearchBarItem">
             <FontAwesomeIcon icon={faBed} />
-            <input type="text" placeholder='你要去哪裡？' className='SearchInput' onChange={(e)=>setDestionation(e.target.value)}/>
+            <input type="text" placeholder='你要去哪裡？' className='SearchInput' onChange={(e)=>setDestination(e.target.value)}/>
           </div>
           <div className="SearchBarItem">
             <FontAwesomeIcon icon={faCalendar} onClick={() => setOpenCalendar(!openCalendar)} />
@@ -66,7 +64,7 @@ const Header = () => {
               className="calendar"
               ranges={dates}
               minDate={new Date()}
-              locale={zhTW}
+              locale={locales['zhTW']}
             />}
           </div>
           <div className="SearchBarItem">
