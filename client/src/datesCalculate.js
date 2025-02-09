@@ -5,3 +5,14 @@ export const ReservationDatesAndPrice = (startDate, endDate, hotelsPrice, roomsP
     const totalRoomsPrice = DatesLength*roomsPrice||0
     return{DatesLength,totalHotelsPrice,totalRoomsPrice}
 }
+//會影響到全域變數
+export const ReservationDatesList = (startDate, endDate)=>{
+    const recordDates = new Date(startDate);
+    const stopRecord = new Date(endDate);
+    const datesList = [];
+    while (recordDates <= stopRecord){
+        datesList.push(recordDates.getTime());
+        recordDates.setDate(recordDates.getDate() + 1);
+    }
+    return {datesList};
+}
